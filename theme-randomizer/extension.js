@@ -2,29 +2,46 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min));
+}
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+	const themes = vscode.extensions.all.filter(e => e.packageJSON.contributes?.themes)
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "theme-randomizer" is now active!');
+	const AllThemes = []
+	themes.forEach(e => {
+		const list = e.packageJSON.contributes.themes
+		list.forEach(x => {
+			const listIdentify = x.id || x.label
+			if (listIdentify) {
+				AllThemes.push(listIdentify)
+			}
+		})
+	})
+	console.log(AllThemes)
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('theme-randomizer.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+	
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from theme randomizer!');
-	});
+
+	const disposable = vscode.commands.registerCommand('theme-randomizer.random', 
+		async function() {
+			const RandomTheme = AllThemes[getRandomInt(0,AllThemes.length)]
+			const setting = vscode.workspace.getConfiguration()
+			
+			console.log(RandomTheme)
+			await setting.update('workbench.colorTheme', RandomTheme, true)
+			vscode.window.showInformationMessage(
+				`Theme ${RandomTheme} is activated`
+			)
+		}
+	);
 
 	context.subscriptions.push(disposable);
+	console.log('Congratulations, your extension "theme-randomizer" is now active!');
 }
 
 // This method is called when your extension is deactivated

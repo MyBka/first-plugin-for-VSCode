@@ -9,12 +9,14 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:theme-randomizer.random"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "theme-randomizer.helloWorld",
-      "title": "Hello World"
+      "command": "theme-randomizer.random",
+      "title": "Randomizer"
     }]
   },
   "scripts": {
