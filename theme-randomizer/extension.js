@@ -2,16 +2,22 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min));
+function getRandomInt(max) {
+  'Функция рандомного значения. На вход принимает 1 параметр - максимальное значение (то есть диапозон функции от 0 до этого параметра). C помощью функции Math.random()'
+  'Получаем случайное дробное значение в пределах от 0 до 1 и умножаем его на максимальное значение, а затем округляем с помощью Math.floor()'
+  return Math.floor(Math.random() * max);
 }
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+	'Функция принимает на вход переменную context, которая является рабочим пространством для взаимодействия с расширениями VScode'
+	'Здесь сначала фильтруются все расширения VScode по наличию тем, затем из каждого нужного расширения записывается название конкретной темы'
+	'(x.id или x.label) - айди названия нужной темы; запись ведется в массив AllThemes. После, используя ранее описанную функцию рандома,'
+	'мы выбираем из списка случайную тему и изменяем пользовательские настройки VSCode, заменяя исходную тему, на случайно выбранную'
 	const themes = vscode.extensions.all.filter(e => e.packageJSON.contributes?.themes)
-
+	
 	const AllThemes = []
 	themes.forEach(e => {
 		const list = e.packageJSON.contributes.themes
@@ -29,7 +35,9 @@ function activate(context) {
 
 	const disposable = vscode.commands.registerCommand('theme-randomizer.random', 
 		async function() {
-			const RandomTheme = AllThemes[getRandomInt(0,AllThemes.length)]
+			'Используем асинхронную функцию, в которой сначала получаем рандомную тему'
+			'После получаем доступ к изменениям настроек VSCode и далее выводим новую случайную тему, изменяя настройки и уведомляя пользователя о смене темы (с названием новой темы)'
+			const RandomTheme = AllThemes[getRandomInt(AllThemes.length)]
 			const setting = vscode.workspace.getConfiguration()
 			
 			console.log(RandomTheme)
