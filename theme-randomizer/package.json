@@ -10,14 +10,19 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:theme-randomizer.random"
+    "onStartupFinished"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [{
       "command": "theme-randomizer.random",
       "title": "Randomizer"
-    }]
+    },
+    {
+      "command": "theme-randomizer.openSettings",
+      "title": "Открыть настройки плагина"
+    }
+  ]
   },
   "scripts": {
     "lint": "eslint .",
