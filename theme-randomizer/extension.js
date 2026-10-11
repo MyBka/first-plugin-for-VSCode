@@ -70,17 +70,19 @@ function activate(context) {
                 
                 switch (message.command) {
                     case 'updateFont':
+                        'Изменение шрифта'
                         await setting.update('editor.fontFamily', message.fontName, true);
                         vscode.window.showInformationMessage(`Шрифт изменен на: ${message.fontName}`);
                         break;
                         
                     case 'updateFontSize':
+                        'Изменение размера шрифта'
                         await setting.update('editor.fontSize', Number(message.fontSize), true);
                         break;
 
                     case 'updateColor': {
                         const colors = { ...(setting.get('workbench.colorCustomizations') || {}) };
-
+                        'Получаем текущие цвета и обновляем выбранный'
                         if (message.target === 'editorBg') {
                             colors['editor.background'] = message.color;
                             colors['editorGroupHeader.tabsBackground'] = message.color;
@@ -111,11 +113,13 @@ function activate(context) {
                     }
                     
                     case 'resetColors':
+                        'Сброс кастомных цветов к дефолтным цветам активной темы'
                         await setting.update('workbench.colorCustomizations', undefined, true);
                         vscode.window.showInformationMessage('Пользовательские цвета сброшены');
                         break;
 
                     case 'randomTheme':
+                        'Запуск зарегистрированной команды рандомайзера'
                         await vscode.commands.executeCommand('theme-randomizer.random');
                         break;
                 }
