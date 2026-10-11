@@ -64,39 +64,33 @@ function activate(context) {
         const currentBorderColor = currentColorCustomizations['editorGroup.border'] || '#ff007f';
 
         panel.webview.html = getWebviewContent(currentFont, currentFontSize, currentEditorBg, currentSideBarBg, currentOuterBarsBg, currentBorderColor);
-
-        panel.webview.onDidReceiveMessage(
+            panel.webview.onDidReceiveMessage(
             async (message) => {
-                'Обработчик всех действий пользователя (изменение стиля и размера шрифта), используем switch, так как в одно время пользователь может изменить только 1 параметр'
                 const setting = vscode.workspace.getConfiguration();
                 
                 switch (message.command) {
                     case 'updateFont':
-                        'Изменение шрифта'
                         await setting.update('editor.fontFamily', message.fontName, true);
                         vscode.window.showInformationMessage(`Шрифт изменен на: ${message.fontName}`);
                         break;
                         
                     case 'updateFontSize':
-                        'Изменение размера шрифта'
                         await setting.update('editor.fontSize', Number(message.fontSize), true);
                         break;
 
                     case 'updateColor': {
-                        'Получаем текущие цвета и обновляем выбранный'
                         const colors = { ...(setting.get('workbench.colorCustomizations') || {}) };
 
                         if (message.target === 'editorBg') {
-                            'Перекрашиваем фон редактора и связанные элементы'
                             colors['editor.background'] = message.color;
                             colors['editorGroupHeader.tabsBackground'] = message.color;
+                            colors['editorGroupHeader.tabsContainerBackground'] = message.color;
                             colors['tab.activeBackground'] = message.color;
+                            colors['tab.inactiveBackground'] = message.color;
                         } else if (message.target === 'sideBarBg') {
-                            'Перекрашиваем боковую панель и заголовок раздела'
                             colors['sideBar.background'] = message.color;
                             colors['sideBarSectionHeader.background'] = message.color;
                         } else if (message.target === 'outerBarsBg') {
-                            'Перекрашиваем все внешние края: боковую панель с иконками, заголовок окна и нижнюю строку'
                             colors['activityBar.background'] = message.color;
                             colors['titleBar.activeBackground'] = message.color;
                             colors['titleBar.inactiveBackground'] = message.color;
@@ -104,7 +98,6 @@ function activate(context) {
                             colors['statusBar.noFolderBackground'] = message.color;
                             colors['statusBar.debuggingBackground'] = message.color;
                         } else if (message.target === 'borderColor') {
-                            'Перекрашиваем разделители и рамки'
                             colors['editorGroup.border'] = message.color;
                             colors['sideBar.border'] = message.color;
                             colors['panel.border'] = message.color;
@@ -116,22 +109,21 @@ function activate(context) {
                         await setting.update('workbench.colorCustomizations', colors, true);
                         break;
                     }
-
+                    
                     case 'resetColors':
-                        'Сброс кастомных цветов к дефолтным цветам активной темы'
                         await setting.update('workbench.colorCustomizations', undefined, true);
                         vscode.window.showInformationMessage('Пользовательские цвета сброшены');
                         break;
 
                     case 'randomTheme':
-                        'Запуск зарегистрированной команды рандомайзера'
                         await vscode.commands.executeCommand('theme-randomizer.random');
                         break;
                 }
             },
-            undefined,
+            undefined, 
             context.subscriptions
         );
+
     })
 
     'Создаем статусбар, который будет отображаться внизу редактора и при нажатии на него открывать нашу панель кастомизации'
